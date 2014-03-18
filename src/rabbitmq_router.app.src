@@ -5,5 +5,5 @@
 {registered, []},
 {mod, {rabbit_router, []}},
 {env, []},
-{applications, [kernel, stdlib]}]}.
+{applications, [kernel, stdlib, rabbit, amqp_client]}]}.
 
