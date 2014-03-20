@@ -22,13 +22,7 @@ start_link() ->
     supervisor:start_link({local, ?SERVER}, ?MODULE, []).
 
 init([]) ->
-    RanchSupSpec={ranch_sup, {ranch_sup, start_link, []},
-		  permanent, 5000, supervisor, [ranch_sup]},
-    ListenerSpec= ranch:child_spec(echo, 100, 
-				   ranch_tcp, [{port, 5555}],
-				   my_rabbit_protocol, []
-				  ),
-    {ok, {{one_for_one, 10, 10}, [RanchSupSpec, ListenerSpec]}}.
+    {ok, {{one_for_one, 10, 10}, []}}.
 
 				   
 

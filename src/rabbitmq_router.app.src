@@ -1,9 +1,9 @@
 {application, rabbitmq_router,
 [{description, "Embedded Rabbit Router"},
 {vsn, "0.01"},
-{modules, []},
+{modules, [rabbitmq_router_sup]},
 {registered, []},
-{mod, {rabbit_router, []}},
+{mod, {rabbitmq_router_app, []}},
 {env, []},
-{applications, [kernel, stdlib, rabbit, amqp_client]}]}.
+{applications, [kernel, stdlib, ranch]}]}.
 

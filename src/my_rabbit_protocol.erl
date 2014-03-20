@@ -19,4 +19,4 @@ loop(Socket, Transport) ->
 	    loop(Socket, Transport);
         _ ->            
 	    ok = Transport:close(Socket)
-    end. ->
+    end.
