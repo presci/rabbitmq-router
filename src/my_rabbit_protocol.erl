@@ -28,29 +28,17 @@ init(Ref, Socket, Transport, _Opts = []) ->
 loop(Socket, Transport) ->
     case Transport:recv(Socket, 0, 5000) of
         {ok, Data} ->
-	    {ok, D, A} = handle_request(get, Socket, Transport, Data, []),
-            Transport:send(Socket, "hello world");
-	    %% loop(Socket, Transport);
+	    {ok, {http_request, Method, Path, Version}, Rest} = erlang:decode_packet(http, Data, []),
+	    io:format(Rest),
+	    Transport:send(Socket, "HTTP/1.1 200 OK\r\n"),
+	    Transport:send(Socket, "Content-Type: text/plain\r\n"),
+	    Transport:send(Socket, "hello world\r\n\r\n"),
+	    loop(Socket, Transport);
         _ ->            
 	    ok = Transport:close(Socket)
     end.
 
-handle_request(get, Socket, Transport, Data, A) when Data =:= "\r\n" ->
-    io:format("newline found"),
-    handle_request(drop, Socket, Transport, Data, A);
-handle_request(drop, _Socket, _Transport, Data, A) ->
-    io:format("end of file~n"),
-    {ok, Data, A};
-handle_request(get, Socket, Transport, Data, A) ->
-    io:format("<<"),
-    io:format(Data),
-    io:format(">>"),
-    case Transport:recv(Socket, 0, 5000) of
-        {ok, D} ->
-	    handle_request(get, Socket, Transport, D, [D|A]);
-	_ ->
-	    handle_request(drop, Socket, Transport, Data, A)
-    end.
+
 
 	
 
