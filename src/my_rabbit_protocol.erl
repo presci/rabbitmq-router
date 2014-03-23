@@ -29,15 +29,19 @@ loop(Socket, Transport) ->
     case Transport:recv(Socket, 0, 5000) of
         {ok, Data} ->
 	    {ok, {http_request, Method, Path, Version}, Rest} = erlang:decode_packet(http, Data, []),
-	    io:format(Rest),
-	    Transport:send(Socket, "HTTP/1.1 200 OK\r\n"),
-	    Transport:send(Socket, "Content-Type: text/plain\r\n"),
-	    Transport:send(Socket, "hello world\r\n\r\n"),
+	    Headers = get_headers(binary:split(Rest, <<"\n">>), []),
+	    io:format("returning~n"),
+	    Transport:send(Socket, "hello world"),
 	    loop(Socket, Transport);
         _ ->            
 	    ok = Transport:close(Socket)
     end.
 
+get_headers([H|T], A) ->
+    io:format(H),
+    get_headers(T,  A ++ [H]);
+get_headers([], A) ->
+    A.
 
 
 	
