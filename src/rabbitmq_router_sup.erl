@@ -22,7 +22,11 @@ start_link() ->
     supervisor:start_link({local, ?SERVER}, ?MODULE, []).
 
 init([]) ->
-    {ok, {{one_for_one, 10, 10}, []}}.
+    My_queue=[{my_queue, {my_queue, start_link, [{hello, "world"}]},
+	    permanent, brutal_kill, worker, [my_queue]}],
+    {ok, {{one_for_one, 1, 60}, My_queue
+	  }}.
+
 
 				   
 

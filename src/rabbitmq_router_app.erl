@@ -14,9 +14,11 @@
 -export([start/2, stop/1]).
 
 start(_StartType, _StartArgs) ->
-    application:start(ranch),
-    {ok, _} = ranch:start_listener(rabbitmq_router, 1,
-				   ranch_tcp, [{port, 5555}], my_rabbit_protocol, []),
+%%    application:start(ranch),
+%%    {ok, _} = ranch:start_listener(rabbitmq_router, 1,
+%%				   ranch_tcp, 
+%%				   [{port, 5555}], 
+%%				   my_rabbit_protocol, []),
     rabbitmq_router_sup:start_link().
 
 stop(_State) ->
