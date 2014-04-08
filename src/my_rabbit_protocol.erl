@@ -5,9 +5,6 @@
 
 -export([start_link/4, init/4]).
 
-
-
-
 start_link(Ref, Socket, Transport, Opts) ->
     Pid = spawn_link(?MODULE, init, [Ref, Socket, Transport, Opts]),
         {ok, Pid}.
