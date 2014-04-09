@@ -23,10 +23,11 @@ loop(Socket, Transport) ->
 		       Rest} = erlang:decode_packet(http, Data, []),
 	    Headers=get_headers(
 		      binary:split(Rest, <<"\r\n">>,[global]), []),
-	    Req=#httpreq{
+	    Req = #httpreq{
 	      method=Method, 
 	      path=Path, 
 	      vsn=Version, headers=Headers},
+%%	    my_worker:start_link(Socket, Transport, Req),
 	    Transport:send(Socket, "hello world"),
 	    loop(Socket, Transport);
         _ ->            

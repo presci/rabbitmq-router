@@ -14,10 +14,10 @@
 %% API
 
 -include_lib("amqp_client/include/amqp_client.hrl").
--export([start_link/0]).
+-include("my_rabbit.hrl").
+
+-export([start_link/0, create_queues/0, test/0]).
 -define(REPLY_TO, "replyqueue").
-
-
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
@@ -25,28 +25,37 @@
 
 -define(SERVER, ?MODULE). 
 
--record(state, {}).
+test()->
+    gen_server:cast(?MODULE, {test, "discovery"}).
 
 start_link() ->
     gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
 
 
 init([]) ->
-    create_queues(),
-    {ok, #state{}}.
+    State = ets:new(corr_pid, [ordered_set, named_table]),
+%%    create_queues(),
+    {ok, State}.
 
-handle_call({send, Method, Uri, Header, Payload, Corr}, _From, State) ->
-    ets:store(State#state.ets, {Corr, _From}),
+handle_call(_Req, _From, State) ->
     {noreply, State}.
 
 
-handle_cast(_Msg, State) ->
+handle_cast({msg,  Corr, Pid, _Req}, State) ->
+    ets:insert(State, {Corr, Pid}),
+    {noreply, State};
+handle_cast({test, Corr}, State) ->
+    case ets:lookup(State, Corr) of
+	[{Corr, Pid}] ->
+	    ets:delete(State, Corr),
+	    Pid ! {amqpmsg, "hello world"};
+	[] ->
+	    none
+    end,
     {noreply, State}.
+
 
 handle_info(_Info, State) ->
-    [{Corr, From}] = ets:lookup(State#state.ets, Corr),
-    ets:delete(State#state.ets, Corr),
-    gen_server:reply(From, Result),
     {noreply, State}.
 
 terminate(_Reason, _State) ->

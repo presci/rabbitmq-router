@@ -5,5 +5,5 @@
 {registered, []},
 {mod, {rabbitmq_router_app, []}},
 {env, []},
-{applications, [kernel, stdlib, ranch]}]}.
+{applications, [kernel, stdlib, ranch, my_queue]}]}.
 
